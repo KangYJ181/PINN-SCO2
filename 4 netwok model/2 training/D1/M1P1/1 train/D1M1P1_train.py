@@ -156,30 +156,30 @@ def train_and_evaluate(w_loss_weight1, w_loss_weight2, learning_rate, weight_dec
                     model.e.data.clamp_(min=0.4, max=0.6)
                     model.f.data.clamp_(min=0.01, max=0.05)
 
-    # Validation
-    model.eval()
-    with torch.no_grad():
-        valid_preds = []
-        valid_trues = []
-        for i, (batch_x, batch_y) in enumerate(valid_loader):
-            batch_x = batch_x.to(device)
-            valid_pred = model(batch_x[:, 5:])
-            valid_preds.append(valid_pred.cpu().numpy())
-            valid_trues.append(batch_y.cpu().numpy())
+        # Validation
+        model.eval()
+        with torch.no_grad():
+            valid_preds = []
+            valid_trues = []
+            for i, (batch_x, batch_y) in enumerate(valid_loader):
+                batch_x = batch_x.to(device)
+                valid_pred = model(batch_x[:, 5:])
+                valid_preds.append(valid_pred.cpu().numpy())
+                valid_trues.append(batch_y.cpu().numpy())
 
-        # Convert lists to arrays
-        valid_preds = np.concatenate(valid_preds)
-        valid_trues = np.concatenate(valid_trues)
+            # Convert lists to arrays
+            valid_preds = np.concatenate(valid_preds)
+            valid_trues = np.concatenate(valid_trues)
 
-        # Inverse normalization
-        valid_preds = scaler.inverse_transform(valid_preds)
-        valid_trues = scaler.inverse_transform(valid_trues)
+            # Inverse normalization
+            valid_preds = scaler.inverse_transform(valid_preds)
+            valid_trues = scaler.inverse_transform(valid_trues)
 
-        # Calculate the average error of each fold
-        error = np.mean(np.abs((valid_preds - valid_trues) / valid_trues))
-        error_ave.append(error)
+            # Calculate the average error of each fold
+            error = np.mean(np.abs((valid_preds - valid_trues) / valid_trues))
+            error_ave.append(error)
 
-    return 1 - np.mean(error_ave)
+return 1 - np.mean(error_ave)
 
 
 device = torch.device("cpu")
